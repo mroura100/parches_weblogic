@@ -1,0 +1,4 @@
+--- 
+- hosts: "{{ target }}"
+  roles:
+    - update_java1.8.191

@@ -1,0 +1,4 @@
+--- 
+- hosts: "{{ target }}"
+  roles:
+    - update_weblogic_12.2

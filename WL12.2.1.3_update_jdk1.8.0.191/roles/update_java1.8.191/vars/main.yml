@@ -1,0 +1,28 @@
+---
+# vars file for WL_update_patch_and_java
+#software_config_files: "/software_wl12/"
+java_dir: "/opt/"
+
+domain_root_directory: "/u01/Oracle/WL12/domainsAnsible/"
+domain_name: "mwidomain"
+
+oracle_home: "/u01/Oracle/WL12/Middleware/Oracle_Home"
+
+user: "proves"
+
+
+
+javaOld: "{{java_old}}"
+javaNew: "{{java_new}}"
+
+#java_ver_actual: "{{ javaVersion.stdout }}"
+#java_ver_actual_major: "{{ ver_actual.split('.')[0]}}.{{ ver_actual.split('.')[1] }}"
+#java_ver_actual_minor: "{{ ver_actual.split('.')[2].split('_')[1] }}"
+
+#java_ver_nova: "{{ java_to_update }}"
+#java_ver_nova_major: "{{ ver_nova.split('.')[0]}}.{{ ver_nova.split('.')[1] }}"
+#java_ver_nova_minor: "{{ ver_nova.split('.')[2] }}"
+
+#$DOMAIN_HOME -name setDomainEnv.sh
+#find $DOMAIN_HOME -name setNMJavaHome.sh
+#find $DOMAIN_HOME -name nodemanager.properties

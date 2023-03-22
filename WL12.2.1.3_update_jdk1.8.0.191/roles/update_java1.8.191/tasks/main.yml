@@ -1,0 +1,78 @@
+- name: Check Java version
+  tags: javaVersion
+  become: true
+  become_user: "{{ user }}"
+  shell: source /home/{{ user }}/.bash_profile;java -version 2>&1 | grep version | awk '{print $3}' | sed 's/"//g'
+  register: javaVersion
+
+- name: La version del Java es
+  tags: javaVersion
+  debug:
+    msg: "{{ javaVersion.stdout }}"
+
+
+
+  
+#- name: Update Java.
+#  tags: updateJava
+  #when: ver_actual_major is version('java_ver_nova_major', '=') and ver_actual_minor is version('java_ver_nova_minor', '<')
+  #block:
+# tasks file for WL_update_patch_and_java
+- name: Download Java {{ java_ver_nova }}
+  get_url:
+    url: "http://192.168.1.110/repositorios/weblogic12/server-jre-8u191-linux-x64.tar.gz"
+    dest: "{{ java_dir }}"
+    
+- name: unarchive new java on {{ java_dir }}
+  #tags: updateJava
+  become: true
+  unarchive:
+    remote_src: true
+    src: "{{ java_dir }}server-jre-8u191-linux-x64.tar.gz"
+    dest: "{{ java_dir }}"
+
+- name: Copy cacerts file to new Java
+  tags: updateJava
+  become: true
+  copy:
+    src: "{{ java_dir }}jdk/jre/lib/security/cacerts"
+    dest: "{{ java_dir }}jdk1.8.0_191/jre/lib/security/cacerts"
+
+- name: Unlink old Java
+  #tags: updateJava
+  file:
+    path: "{{ java_dir }}jdk" 
+    state: absent
+  
+- name: Create a symbolic link of new java
+  #tags: updateJava
+  file:
+    src: "{{ java_dir }}jdk1.8.0_191"
+    dest: "{{ java_dir }}jdk"
+    state: link
+
+- name: Change owner and group to root
+  file:  
+    path: "{{ java_dir }}jdk1.8.0_191"
+    owner: root
+    group: root
+    recurse: yes
+    
+
+
+- name: set the SSL listener to false in nodemanager.properties file
+  tags: replaceline,updateJava
+  become: true
+  become_user: "{{ user }}"
+  replace:
+    path: '{{item.src}}'
+    regexp: '\/\opt\/\jdk1.8.0_181'
+    replace: '/opt/jdk'
+  register: replaceline
+  with_items:
+     - { src: "{{ oracle_home }}/oui/.globalEnv.properties"} 
+     - { src: "{{ domain_root_directory }}{{ domain_name }}/bin/setNMJavaHome.sh"}
+     - { src: "{{ domain_root_directory }}{{ domain_name }}/bin/setDomainEnv.sh"}
+     - { src: "{{ domain_root_directory }}{{ domain_name }}/nodemanager/nodemanager.properties"}
+  
+

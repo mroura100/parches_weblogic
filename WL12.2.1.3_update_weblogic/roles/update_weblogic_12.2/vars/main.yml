@@ -1,0 +1,7 @@
+---
+# vars file for WL_update_patch_and_java
+oracle_home: "/u01/Oracle/WL12/Middleware/Oracle_Home"
+
+user: "proves"
+
+patch_dir: "/home/{{ user }}/"

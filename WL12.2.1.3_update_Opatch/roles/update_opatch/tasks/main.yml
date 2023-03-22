@@ -1,0 +1,23 @@
+---
+- name: Download Opatch
+  get_url:
+    url: "http://192.168.1.110/repositorios/weblogic12/opatch_generic.jar"
+    dest: "{{ opatch_dir }}"
+  
+- name: Change owner and group to root
+  file:  
+    path: "{{ opatch_dir }}opatch_generic.jar"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    
+
+- name: Update Opatch
+  become: true
+  become_user: "{{ user }}"
+  shell: source /home/{{ user }}/.bash_profile;java -jar {{ opatch_dir }}opatch_generic.jar -silent oracle_home={{ oracle_home }};{{ oracle_home }}/OPatch/opatch version -jre $JAVA_HOME
+  register: newOpatchVersion
+
+- name: La version del opatch es
+  tags: updatePatchWebLogic
+  debug:
+    msg: " {{ newOpatchVersion }}"
