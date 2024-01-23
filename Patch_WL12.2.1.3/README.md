@@ -13,11 +13,15 @@ Si esta en una versión anterior ejecutar el role WL12.2.1.3_update_jdk1.8.0.191
 Role Variables
 --------------
 
-# vars file for Patch_WL12.2.1.3
+
 oracle_home: "/u01/Oracle/WL12/Middleware/Oracle_Home"
+
 user: "orawls"
+
 patch_dir: "/tmp/"
+
 patch_file: "p35261722_122130_Generic.zip"
+
 uncompress_patch_dir: "WLS_SPB_12.2.1.3.230405"
 
 
