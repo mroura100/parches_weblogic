@@ -1,0 +1,57 @@
+# tasks file for Patch_WL12.2.1.3
+---
+#- name: Stop Weblogic
+
+- name: Copy Files to update WebLogic
+  tags: updatePatchWebLogic
+  become: true
+  become_user: "{{ user }}"
+  get_url:
+    url: "http://192.168.1.110/{{ patch_file }}"
+    dest: "{{ patch_dir }}"
+
+- name: Change owner and group to {{ user }}
+  file:
+    path: "{{ patch_dir }}{{ patch_file }}"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+
+
+- name: Unarchive patch file
+  tags: updatePatchWebLogic
+  become: true
+  unarchive:
+    remote_src: true
+    src: "{{ patch_dir }}{{ patch_file }}"
+    dest: "{{ patch_dir }}"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+
+
+- name: Apply Patch WL
+  tags: updatePatchWebLogic
+  become: true
+  become_user: "{{ user }}"
+  shell: "cd {{ patch_dir }}{{uncompress_patch_dir}}/tools/spbat/generic/SPBAT;./spbat.sh -phase apply -oracle_home {{ oracle_home }}"
+  register: update
+
+- name: Apply Patch WL result
+  tags: updatePatchWebLogic
+  debug:
+    msg: "{{ update.stdout_lines }}"
+
+
+- name: lsinventory
+  tags: lsinventory
+  become: true
+  become_user: "{{ user }}"
+  shell: "{{ oracle_home }}/OPatch/opatch lsinventory > {{ patch_dir }}lsinventory.out"
+  register: lsinventory
+
+
+- name: lsinventory result
+  tags: lsinventory
+  debug:
+    msg: "{{ lsinventory.stdout_lines }}"
+
+#- name: Start Weblogic
